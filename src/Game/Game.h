@@ -1,6 +1,8 @@
 #ifndef GAME_H
 #define GAME_H
 
+#include "../ECS/ECS.h"
+#include "../AssetStore/AssetStore.h"
 #include <SDL2/SDL.h>
 
 const int FPS = 60;
@@ -12,6 +14,9 @@ class Game {
         int millisecsPreviousFrame = 0;
         SDL_Window* window;
         SDL_Renderer* renderer;
+
+        std::unique_ptr<Registry> registry;
+        std::unique_ptr<AssetStore> assetStore;
 
     public: 
         Game();
