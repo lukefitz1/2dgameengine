@@ -15,11 +15,30 @@ class RenderSystem: public System {
         };
 
         void Update(SDL_Renderer* renderer, std::unique_ptr<AssetStore>& assetStore) {
-            // Loop all entities that the system is interested in
+            // Create a vector with both Sprie and Transform component of all entities
+            struct RenderableEntity {
+                TransformComponent transfromComponent;
+                SpriteComponent spriteComponent;
+            };
+            std::vector<RenderableEntity> renderableEntities;
             for (auto entity: GetSystemEntities()) {
+                RenderableEntity renderableEntity;
+                renderableEntity.spriteComponent = entity.GetComponent<SpriteComponent>();
+                renderableEntity.transfromComponent = entity.GetComponent<TransformComponent>();
+                
+                renderableEntities.emplace_back(renderableEntity);
+            }
+
+            // Sort the vector by the z-index value
+            std::sort(renderableEntities.begin(), renderableEntities.end(), [](const RenderableEntity& a, const RenderableEntity& b) {
+                return a.spriteComponent.zIndex < b.spriteComponent.zIndex;
+            });
+
+            // Loop all entities that the system is interested in
+            for (auto entity: renderableEntities) {
                 // Update entity position based on its velocity
-                const auto& transform = entity.GetComponent<TransformComponent>();
-                const auto sprite = entity.GetComponent<SpriteComponent>();
+                const auto transform = entity.transfromComponent;
+                const auto sprite = entity.spriteComponent;
 
                 // Set the source rectangle of our original sprite texture
                 SDL_Rect srcRect = sprite.srcRect;
