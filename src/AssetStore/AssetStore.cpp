@@ -9,7 +9,7 @@ AssetStore::AssetStore() {
 
 AssetStore::~AssetStore() {
     ClearAssets();
-    Logger::Log("AssetStore descructor called!");
+    Logger::Log("AssetStore destructor called!");
 }
 
 void AssetStore::ClearAssets() {
