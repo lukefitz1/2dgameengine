@@ -7,6 +7,7 @@
 #include <unordered_map>
 #include <typeindex>
 #include <set>
+#include <deque>
 
 const unsigned int MAX_COMPONENTS = 32;
 
@@ -37,6 +38,7 @@ class Entity {
     public:
         Entity(int id): id(id) {};
         Entity(const Entity& entity) = default;
+        void Kill();
         int GetId() const;
 
         Entity& operator =(const Entity& other) = default;
@@ -149,6 +151,9 @@ class Registry {
         std::set<Entity> entitiesToBeAdded;
         std::set<Entity> entitiesToBeKilled;
 
+        // List of free entity ids that were previously removed
+        std::deque<int> freeIds;
+
     public:
         Registry() {
             Logger::Log("Registry constructor called");
@@ -164,6 +169,8 @@ class Registry {
         // Entity management
         Entity CreateEntity();
 
+        void KillEntity(Entity entity);
+
         // Component management
         template <typename TComponent, typename ...TArgs> void AddComponent(Entity entity, TArgs&& ...args);
         template <typename TComponent> void RemoveComponent(Entity entity);
@@ -176,12 +183,9 @@ class Registry {
         template <typename TSystem> bool HasSystem() const;
         template <typename TSystem> TSystem& GetSystem() const;
 
-        // Checks the component signature of an entity and add the entity to the systems that are interested in it
+        // Add and remove entities from their systems
         void AddEntityToSystem(Entity entity);
-        
-        // TODO
-        // void KillEntity(Entity entity);
-        // void RemoveComponent(Entity entity);
+        void RemoveEntityFromSystems(Entity entity);
 };
 
 // Template functions have to be implemented in the header file, not the cpp file
