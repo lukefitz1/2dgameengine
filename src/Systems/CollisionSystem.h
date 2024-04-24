@@ -2,6 +2,8 @@
 #define COLLISIONSYSTEM_H
 
 #include "../ECS/ECS.h"
+#include "../EventBus/EventBus.h"
+#include "../Events/CollisionEvent.h"
 #include "../Components/BoxColliderComponent.h"
 #include "../Components/TransformComponent.h"
 
@@ -12,7 +14,7 @@ class CollisionSystem: public System {
             RequireComponent<BoxColliderComponent>();
         }
 
-        void Update() {
+        void Update(std::unique_ptr<EventBus>& eventBus) {
             // Check all entities that have a box collider to see if they are colliding with each other
             // Tip: AABB collision check - Axis-Aligned Bounding Boxes
             auto entities = GetSystemEntities();
@@ -50,7 +52,8 @@ class CollisionSystem: public System {
                     if (collisionHappened) {
                         Logger::Log("Entity " + std::to_string(a.GetId()) + " is colliding with entity " + std::to_string(b.GetId()));
 
-                        // TODO: emit an event
+                        // Emit an event
+                        eventBus->EmitEvent<CollisionEvent>(a, b);
                     }
                 }
             }
