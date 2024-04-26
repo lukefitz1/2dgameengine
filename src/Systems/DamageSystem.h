@@ -20,8 +20,8 @@ class DamageSystem: public System {
         // This is the function that is going to be invoked if the event type CollisionEvent is emitted
         void onCollision(CollisionEvent& event) {
             Logger::Log("The Damage System received an event collision between entities " + std::to_string(event.a.GetId()) + " and " + std::to_string(event.b.GetId()));
-            event.a.Kill();
-            event.b.Kill();
+            // event.a.Kill();
+            // event.b.Kill();
         }
 
         void Update() {
